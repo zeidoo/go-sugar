@@ -14,7 +14,7 @@ func StartGrpc(address string, registerServices func(*rpc.Server), opt ...rpc.Se
 	}
 	log.Printf("listening on %s", lis.Addr())
 
-	s := rpc.NewServer()
+	s := rpc.NewServer(opt...)
 	registerServices(s)
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
