@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-func StartGrpc(address string, registerServices func(*rpc.Server)) {
+func StartGrpc(address string, registerServices func(*rpc.Server), opt ...rpc.ServerOption) {
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
