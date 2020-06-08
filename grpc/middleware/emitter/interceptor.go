@@ -21,10 +21,12 @@ type interceptor struct {
 func NewInterceptor(msgSender Sender) interceptor {
 	return interceptor{sender: msgSender}
 }
-func (i *interceptor) Emit(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+func (i *interceptor) Emit(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, error error) {
+	res, err := handler(ctx, req)
+
 	emitter, ok := info.Server.(Emitter)
 	if !ok || !emitter.ShouldEmit(info.FullMethod) {
-		return handler(ctx, req)
+		return res, err
 	}
 
 	payload := emitter.GetEmitterPayload(info.FullMethod, req)
@@ -32,5 +34,5 @@ func (i *interceptor) Emit(ctx context.Context, req interface{}, info *grpc.Unar
 	if err != nil {
 		fmt.Printf("Couldn't emmit. %v", err)
 	}
-	return handler(ctx, req)
+	return res, err
 }
